@@ -49,7 +49,7 @@ params['objective'] = 'reg:linear'
 params['eval_metric'] = 'mae'
 params['min_child_weight'] = 6
 params['colsample_bytree'] = 0.2
-params['max_depth'] = 3
+params['max_depth'] = 4
 params['silent'] = 1
 
 watchlist = [(d_train, 'train'), (d_valid, 'valid')]
@@ -85,4 +85,4 @@ for c in sub.columns[sub.columns != 'ParcelId']:
     sub[c] = p_test
 
 print('Writing csv ...')
-sub.to_csv('xgb_starter.csv', index=False, float_format='%.4f') # Thanks to @inversion
+sub.to_csv('data/xgb_starter.csv', index=False, float_format='%.4f') # Thanks to @inversion
