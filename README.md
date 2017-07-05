@@ -1,7 +1,14 @@
-# I shoud in jion to kaggle complicatin!
+# Kaggle complication with Python
 
-## 1.Titanic
+## Titanic
+Ranking:19%
 
-## 2.Digit Recognizer
+## Digit Recognizer
+Ranking:73%
 
-## 3.Zillow Prize
+## Quora Question Duplication
+Ranking:91%
+
+## Zillow Prize
+Ranking:52%
+

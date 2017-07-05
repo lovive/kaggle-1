@@ -1,4 +1,5 @@
 #!/usr/bin/python
+
 import numpy as np
 import pandas as pd
 import xgboost as xgb
@@ -31,7 +32,7 @@ for c in x_train.dtypes[x_train.dtypes == object].index.values:
 
 del df_train; gc.collect()
 
-split = 80000
+split = 70000
 x_train, y_train, x_valid, y_valid = x_train[:split], y_train[:split], x_train[split:], y_train[split:]
 
 print('Building DMatrix...')
@@ -44,12 +45,12 @@ del x_train, x_valid; gc.collect()
 print('Training ...')
 
 params = {}
-params['eta'] = 0.02
+params['eta'] = 0.01
 params['objective'] = 'reg:linear'
 params['eval_metric'] = 'mae'
 params['min_child_weight'] = 6
 params['colsample_bytree'] = 0.2
-params['max_depth'] = 4
+params['max_depth'] = 3
 params['silent'] = 1
 
 watchlist = [(d_train, 'train'), (d_valid, 'valid')]
@@ -85,4 +86,6 @@ for c in sub.columns[sub.columns != 'ParcelId']:
     sub[c] = p_test
 
 print('Writing csv ...')
-sub.to_csv('data/xgb_starter.csv', index=False, float_format='%.4f') # Thanks to @inversion
+sub.to_csv('data/xgb_starter.csv', index=False, float_format='%.4f') 
+
+# Thanks to @inversion
