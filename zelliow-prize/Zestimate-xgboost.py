@@ -21,6 +21,9 @@ print('Creating training set ...')
 
 df_train = train.merge(prop, how='left', on='parcelid')
 
+# drop outliers
+df_train = df_train[df_train.logerror > -0.4]
+df_train = df_train[df_train.logerror < 0.4]
 x_train = df_train.drop(['parcelid', 'logerror', 'transactiondate', 'propertyzoningdesc', 'propertycountylandusecode'], axis=1)
 y_train = df_train['logerror'].values
 print(x_train.shape, y_train.shape)
@@ -32,7 +35,7 @@ for c in x_train.dtypes[x_train.dtypes == object].index.values:
 
 del df_train; gc.collect()
 
-split = 70000
+split = 80000
 x_train, y_train, x_valid, y_valid = x_train[:split], y_train[:split], x_train[split:], y_train[split:]
 
 print('Building DMatrix...')
@@ -50,8 +53,11 @@ params['objective'] = 'reg:linear'
 params['eval_metric'] = 'mae'
 params['min_child_weight'] = 6
 params['colsample_bytree'] = 0.2
-params['max_depth'] = 3
+params['max_depth'] = 6
+params['lambda'] = 0.4
+params['alpha'] = 0.8
 params['silent'] = 1
+
 
 watchlist = [(d_train, 'train'), (d_valid, 'valid')]
 clf = xgb.train(params, d_train, 10000, watchlist, early_stopping_rounds=100, verbose_eval=10)
