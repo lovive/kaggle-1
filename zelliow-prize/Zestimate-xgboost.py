@@ -35,7 +35,7 @@ for c in x_train.dtypes[x_train.dtypes == object].index.values:
 
 del df_train; gc.collect()
 
-split = 80000
+split = 60000
 x_train, y_train, x_valid, y_valid = x_train[:split], y_train[:split], x_train[split:], y_train[split:]
 
 print('Building DMatrix...')
@@ -51,11 +51,11 @@ params = {}
 params['eta'] = 0.01
 params['objective'] = 'reg:linear'
 params['eval_metric'] = 'mae'
-params['min_child_weight'] = 6
+params['min_child_weight'] = 20
 params['colsample_bytree'] = 0.2
-params['max_depth'] = 6
-params['lambda'] = 0.4
-params['alpha'] = 0.8
+params['max_depth'] = 12
+params['lambda'] = 0.3
+params['alpha'] = 0.6
 params['silent'] = 1
 
 
