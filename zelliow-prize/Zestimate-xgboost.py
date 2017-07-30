@@ -35,7 +35,7 @@ for c in x_train.dtypes[x_train.dtypes == object].index.values:
 
 del df_train; gc.collect()
 
-split = 80000
+split = 60000
 x_train, y_train, x_valid, y_valid = x_train[:split], y_train[:split], x_train[split:], y_train[split:]
 
 print('Building DMatrix...')
