@@ -51,11 +51,11 @@ params = {}
 params['eta'] = 0.01
 params['objective'] = 'reg:linear'
 params['eval_metric'] = 'mae'
-params['min_child_weight'] = 20
+params['min_child_weight'] = 7
 params['colsample_bytree'] = 0.2
-params['max_depth'] = 12
-params['lambda'] = 0.3
-params['alpha'] = 0.6
+params['max_depth'] = 8
+params['lambda'] = 0.4
+params['alpha'] = 0.8
 params['silent'] = 1
 
 
