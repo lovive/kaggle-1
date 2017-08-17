@@ -3,9 +3,6 @@
 import numpy as np
 import pandas as pd
 
-print "load data..."
-train = pd.read_csv("train.csv")
-test = pd.read_csv("test.csv")
 
 # First step: Cleaning Data
 def clean_data(titanic):
@@ -22,9 +19,6 @@ def clean_data(titanic):
     titanic["Embarked"] = titanic["Embarked"].fillna("S")
 
     return titanic
-
-train = clean_data(train)
-test = clean_data(test)
 
 # Feature Engineering
 def FeatureEngineer(titanic):
@@ -57,13 +51,27 @@ def FeatureEngineer(titanic):
         else:
             return 0
 
-    train["name"] = train["Name"].apply(getName)
+    titanic["name"] = titanic["Name"].apply(getName)
 
     return titanic
 
-train = FeatureEngineer(train)
-test = FeatureEngineer(test)
+if __name__ == "__main__":
+    print "load data..."
+    train = pd.read_csv("train.csv")
+    test = pd.read_csv("test.csv")
 
-train.to_csv("feature_train.csv", encoding="utf-8")
+    print "clean data..."
+    train = clean_data(train)
+    test = clean_data(test)
+
+    print "feature engineering..."
+    train = FeatureEngineer(train)
+    test = FeatureEngineer(test)
+
+    print test.head(3)
+
+    print "write to csv: feature_train.csv and feature_test.csv"
+    train.to_csv("feature_train.csv", encoding="utf-8")
+    test.to_csv("feature_test.csv", encoding="utf-8")
 
 
