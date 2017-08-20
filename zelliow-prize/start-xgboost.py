@@ -1,10 +1,10 @@
-#!/usr/bin/python
-
 import numpy as np
 import pandas as pd
 import xgboost as xgb
 import gc
 
+
+np.random.seed(8)
 print('Loading data ...')
 
 train = pd.read_csv('data/train_2016.csv')
@@ -21,9 +21,6 @@ print('Creating training set ...')
 
 df_train = train.merge(prop, how='left', on='parcelid')
 
-# drop outliers
-df_train = df_train[df_train.logerror > -0.4]
-df_train = df_train[df_train.logerror < 0.4]
 x_train = df_train.drop(['parcelid', 'logerror', 'transactiondate', 'propertyzoningdesc', 'propertycountylandusecode'], axis=1)
 y_train = df_train['logerror'].values
 print(x_train.shape, y_train.shape)
@@ -35,8 +32,8 @@ for c in x_train.dtypes[x_train.dtypes == object].index.values:
 
 del df_train; gc.collect()
 
-split = 60000
-x_train, y_train, x_valid, y_valid = x_train[:split], y_train[:split], x_train[split:], y_train[split:]
+split = 89000
+x_train, y_train, x_valid, y_valid = x_train[65000:split], y_train[65000:split], x_train[split:], y_train[split:]
 
 print('Building DMatrix...')
 
@@ -48,19 +45,18 @@ del x_train, x_valid; gc.collect()
 print('Training ...')
 
 params = {}
-params['eta'] = 0.01
+params['eta'] = 0.005
 params['objective'] = 'reg:linear'
 params['eval_metric'] = 'mae'
-params['min_child_weight'] = 7
-params['colsample_bytree'] = 0.2
-params['max_depth'] = 8
-params['lambda'] = 0.4
-params['alpha'] = 0.8
+params['max_depth'] = 2
+params['min_child_weight']=20
+params['subsample']=0.1
+params['colsample_bytree']=0.2
+params['seed'] = 88
 params['silent'] = 1
 
-
 watchlist = [(d_train, 'train'), (d_valid, 'valid')]
-clf = xgb.train(params, d_train, 10000, watchlist, early_stopping_rounds=100, verbose_eval=10)
+clf = xgb.train(params, d_train, 10000, watchlist, early_stopping_rounds=100, verbose_eval=1)
 
 del d_train, d_valid
 
@@ -92,6 +88,4 @@ for c in sub.columns[sub.columns != 'ParcelId']:
     sub[c] = p_test
 
 print('Writing csv ...')
-sub.to_csv('data/xgb_starter.csv', index=False, float_format='%.4f') 
-
-# Thanks to @inversion
+sub.to_csv('data/sub_14.csv', index=False, float_format='%.4f') # Thanks to @inversion
