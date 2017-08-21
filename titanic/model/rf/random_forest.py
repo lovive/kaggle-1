@@ -7,27 +7,24 @@ from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import accuracy_score
 
 print "load data..."
-train = pd.read_csv("data/train.csv")
-test = pd.read_csv("data/test.csv")
+train = pd.read_csv("../data/train.csv")
+test = pd.read_csv("../data/test.csv")
 
 print "clean data..."
 
 
 def clean_data(titanic):
     # chile
-    titanic["child"] = (titanic["Age"] < 16)
+    titanic["child"] = (titanic["Age"] < 15)
 
     # Age
     titanic["Age"] = titanic["Age"].fillna(titanic["Age"].median())
 
     # Sex
-    titanic.loc[titanic["Sex"] == "male", "Sex"] = 0
-    titanic.loc[titanic["Sex"] == "female", "Sex"] = 1
+    titanic["Sex"] = titanic["Sex"].map({"famale": 1, "male": 0})
 
     # Embarked
-    titanic.loc[titanic["Embarked"] == 'S', "Embarked"] = 1
-    titanic.loc[titanic["Embarked"] == 'C', "Embarked"] = 2
-    titanic.loc[titanic["Embarked"] == 'Q', "Embarked"] = 3
+    titanic["Embarked"] = titanic['Embarked'].map({'S': 0, 'C': 1, 'Q': 2})
     titanic.loc[titanic["Embarked"].isnull()] = 0
 
     # Name
@@ -42,8 +39,11 @@ def clean_data(titanic):
 
     # Carbin
     def replace_cabin(cabin):
-        return str(cabin)[:1]
-    titanic["Cabin"] = titanic["Cabin"].apply(replace_cabin)
+        if cabin:
+            return 1
+        else:
+            return 0
+    titanic["cabin"] = titanic["Cabin"].apply(replace_cabin)
 
     # family_num
     titanic["family_num"] = titanic["SibSp"] + titanic["Parch"]
@@ -60,7 +60,7 @@ test_data = clean_data(test)
 print "Engineer Feature..."
 
 predictors = ["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Embarked", "child",
-              "family_num", "name"]
+              "family_num", "name", "cabin"]
 
 # Model of Random Forest
 print "fit model..."
@@ -74,10 +74,10 @@ rf = RandomForestClassifier(
     oob_score=True
 )
 param_test = {
-    'n_estimators': range(140, 170, 10),
-    'min_samples_split': range(5, 7, 1),
-    'min_samples_leaf': range(4, 7, 1),
-    'max_depth': range(3, 6, 1)
+    'n_estimators': [140],
+    'min_samples_split': [6],
+    'min_samples_leaf': [4],
+    'max_depth': [4]
 }
 clf = GridSearchCV(estimator=rf, param_grid=param_test, scoring='accuracy', cv=10)
 clf.fit(train_data[predictors], train_data["Survived"])
@@ -91,4 +91,4 @@ submission = pd.DataFrame({
     "Survived": predict_data
 })
 
-submission.to_csv('data/random-forest.csv', index=False)
+submission.to_csv('../data/random-forest.csv', index=False)

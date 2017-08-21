@@ -42,7 +42,6 @@ def FeatureEngineer(titanic):
     titanic["embark"] = titanic["Embarked"].apply(getEmbark)
 
     # name
-    # Name
     def getName(name):
         if "Mr" in str(name):
             return 1
