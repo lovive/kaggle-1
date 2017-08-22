@@ -29,7 +29,7 @@ def FeatureEngineer(titanic):
     titanic["child"] = titanic["Age"].apply(lambda x: 1 if x < 16 else 0)
 
     # familysize
-    titanic["fimalysize"] = titanic["SibSp"] + titanic["Parch"]
+    titanic["fimalysize"] = titanic["SibSp"] + titanic["Parch"] + 1
 
     # embark
     def getEmbark(Embarked):
@@ -49,8 +49,15 @@ def FeatureEngineer(titanic):
             return 2
         else:
             return 0
-
     titanic["name"] = titanic["Name"].apply(getName)
+
+    # cabin
+    def getCabin(cabin):
+        if cabin == "N":
+            return 0
+        else:
+            return 1
+    titanic["cabin"] = titanic["Cabin"].apply(getCabin)
 
     return titanic
 
