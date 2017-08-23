@@ -63,8 +63,8 @@ def FeatureEngineer(titanic):
 
 if __name__ == "__main__":
     print "load data..."
-    train = pd.read_csv("train.csv")
-    test = pd.read_csv("test.csv")
+    train = pd.read_csv("../input/train.csv")
+    test = pd.read_csv("../input/test.csv")
 
     print "clean data..."
     train = clean_data(train)
