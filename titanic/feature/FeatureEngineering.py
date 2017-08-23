@@ -29,7 +29,7 @@ def FeatureEngineer(titanic):
     titanic["child"] = titanic["Age"].apply(lambda x: 1 if x < 16 else 0)
 
     # familysize
-    titanic["fimalysize"] = titanic["SibSp"] + titanic["Parch"]
+    titanic["fimalysize"] = titanic["SibSp"] + titanic["Parch"] + 1
 
     # embark
     def getEmbark(Embarked):
@@ -42,7 +42,6 @@ def FeatureEngineer(titanic):
     titanic["embark"] = titanic["Embarked"].apply(getEmbark)
 
     # name
-    # Name
     def getName(name):
         if "Mr" in str(name):
             return 1
@@ -50,15 +49,22 @@ def FeatureEngineer(titanic):
             return 2
         else:
             return 0
-
     titanic["name"] = titanic["Name"].apply(getName)
+
+    # cabin
+    def getCabin(cabin):
+        if cabin == "N":
+            return 0
+        else:
+            return 1
+    titanic["cabin"] = titanic["Cabin"].apply(getCabin)
 
     return titanic
 
 if __name__ == "__main__":
     print "load data..."
-    train = pd.read_csv("train.csv")
-    test = pd.read_csv("test.csv")
+    train = pd.read_csv("../input/train.csv")
+    test = pd.read_csv("../input/test.csv")
 
     print "clean data..."
     train = clean_data(train)
