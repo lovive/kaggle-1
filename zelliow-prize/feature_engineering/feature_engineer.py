@@ -7,9 +7,9 @@ import pandas as pd
 
 # load data
 def loadData():
-    train = pd.read_csv('train_2016.csv')
-    properties = pd.read_csv('properties_2016.csv')
-    sample = pd.read_csv('sample_submission.csv')
+    train = pd.read_csv('../data/train_2016.csv')
+    properties = pd.read_csv('../data/properties_2016.csv')
+    sample = pd.read_csv('../data/sample_submission.csv')
 
     return train, properties, sample
 
@@ -43,11 +43,13 @@ if __name__ == "__main__":
     train = train.merge(properties, on='parcelid', how='left')
 
     sample['parcelid'] = sample['ParcelId']
-    test = sample.merge(properties, on='parcelid', how='left')
+    #test = sample.merge(properties, on='parcelid', how='left')
 
     train = featureSelect(train)
-    test = featureSelect(test)
+    #test = featureSelect(test)
+
+    print train.info()
 
     print "write to csv: feature_train.csv and feature_test.csv"
-    train.to_csv("feature_train.csv", encoding="utf-8")
-    test.to_csv("feature_test.csv", encoding="utf-8")
+    #train.to_csv("../data/feature_train.csv", encoding="utf-8")
+    #test.to_csv("../data/feature_test.csv", encoding="utf-8")
