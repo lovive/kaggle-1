@@ -52,7 +52,7 @@ params = {
     'max_depth': range(3, 11, 2)
 }
 grid_Search = GridSearchCV(estimator=xbg, param_grid=params, cv=5)
-grid_Search.fit(train_data[predictors], train_data['survived'])
+grid_Search.fit(train_data[predictors], train_data['Survived'])
 grid_Search.grid_scores_, grid_Search.best_params_, grid_Search.best_score_
 
 
