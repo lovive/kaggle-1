@@ -15,12 +15,13 @@ from sklearn.model_selection import StratifiedKFold
 xgb_params = {
     'objective': 'reg:linear',
     'eval_metric': 'mae',
-    'min_child_weight': 20,
-    'learning_rate': 0.003,
-    'max_depth': 8,
-    'subsample': 0.8,
+    # 'base_score': 0,
+    'min_child_weight': 14,
+    'learning_rate': 0.005,
+    'max_depth': 6,
+    'subsample': 0.77,
     'lambda': 0.8,
-    'alpha': 0.4,
+    'alpha': 0.1,
     'base_score': 0,
     'seed': 400,
     'silent': 1,
@@ -64,23 +65,19 @@ def cv_turn_model(x_train, y_train):
     return clf
 
 
-def submission(alg, features):
-    tests = pd.read_csv('../../data/feature_test.csv', chunksize=500000, iterator=True)
-    pre = []
-    for test in tests:
-        dtest = xgb.DMatrix(test[features])
-        del test; gc.collect()
-        # print "predict..."
-        pre_test = alg.predict(dtest)
-        pre.extend(pre_test)
-        print len(pre)
-        del dtest; gc.collect()
+def submission(alg, feature):
+    test = pd.read_csv('../../data/feature_test.csv')
+    dtest = xgb.DMatrix(test[features])
+    del test; gc.collect()
+
+    print "predict..."
+    pre_test = alg.predict(dtest)
+    del dtest; gc.collect()
 
     print "submit..."
     sub = pd.read_csv('../../data/sample_submission.csv')
-    print sub.shape
     for c in sub.columns[sub.columns != 'ParcelId']:
-        sub[c] = pre
+        sub[c] = pre_test
     submit_file = '../../submission/{}.csv'.format(datetime.now().strftime('%Y%m%d_%H_%M'))
     sub.to_csv(submit_file, index=False, float_format='%.4f')
 
@@ -91,15 +88,22 @@ if __name__ == "__main__":
     # drop out ouliers
     train = train[train.logerror > -0.4]
     train = train[train.logerror < 0.42]
-    print train.info()
+    train = train[train['finishedsquarefeet12'] < 15000]
+    #train = train[train['taxamount'] < 2000000]
+    #train = train[train['calculatedfinishedsquarefeet'] < 150000]
 
+    train['yearbuilt'] = train['yearbuilt'].apply(lambda x: 2017-x)
+
+    #train['finishedsquarefeet12'].isnull() = train
+
+    print train.info()
     features = ['finishedsquarefeet12', 'taxamount', 'yearbuilt', 'taxvaluedollarcnt',
                 'structuretaxvaluedollarcnt', 'lotsizesquarefeet', 'calculatedfinishedsquarefeet',
                 'latitude', 'rawcensustractandblock', 'regionidcity', 'regionidzip',
                 'regionidneighborhood', 'garagetotalsqft', 'censustractandblock',
                 'longitude', 'poolcnt', 'landtaxvaluedollarcnt', 'bedroomcnt',
                 'finishedsquarefeet6', 'propertylandusetypeid', 'unitcnt']
-    x_train = train.drop(['parcelid', 'logerror', 'transactiondate', 'calculatedfinishedsquarefeet', 'propertyzoningdesc', 'propertycountylandusecode'], axis=1)
+    x_train = train.drop(['parcelid', 'logerror','transactiondate', 'propertyzoningdesc', 'propertycountylandusecode'], axis=1)
     # x_train = train[features]
     y_train = train["logerror"].values
     features = x_train.columns
@@ -107,11 +111,11 @@ if __name__ == "__main__":
     del train; gc.collect()
 
     print "train model 1"
-    xgb1 = split_turn_model(x_train, y_train)
-    submission(xgb1, features)
+    #xgb1 = split_turn_model(x_train, y_train)
+    #submission(xgb1, features)
 
     print "train model 2"
-    #xgb2 = cv_turn_model(x_train, y_train)
-    #submission(xgb2, features)
+    xgb2 = cv_turn_model(x_train, y_train)
+    submission(xgb2, features)
 
 
