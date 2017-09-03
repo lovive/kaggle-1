@@ -5,19 +5,15 @@ import pandas as pd
 import xgboost as xgb
 import gc
 from datetime import datetime
-
 from xgboost import XGBClassifier
-
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import StratifiedKFold
 
 # default xgb params
 xgb_params = {
     'objective': 'reg:linear',
     'eval_metric': 'mae',
     # 'base_score': 0,
-    'min_child_weight': 12,
-    'learning_rate': 0.0021,
+    'min_child_weight': 14,
+    'learning_rate': 0.003,
     'max_depth': 8,
     'subsample': 0.8,
     'lambda': 0.8,
@@ -89,8 +85,8 @@ if __name__ == "__main__":
     print('Loading data ...')
     train = pd.read_csv('../../data/feature_train.csv')
     # drop out ouliers
-    train = train[train.logerror > -0.42]
-    train = train[train.logerror < 0.4]
+    train = train[train.logerror > -0.4]
+    train = train[train.logerror < 0.42]
 
     x_train = train.drop(['parcelid', 'logerror','transactiondate', 'propertyzoningdesc', 'propertycountylandusecode'], axis=1)
     y_train = train["logerror"].values

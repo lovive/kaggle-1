@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import datetime as dt
 
-
 # load data
 def load_data():
     train = pd.read_csv('../data/train_2016.csv')
@@ -13,7 +12,6 @@ def load_data():
     sample = pd.read_csv('../data/sample_submission.csv')
 
     return train, properties, sample
-
 
 # build to float32 to save memory
 def clean_data(dataframe):
@@ -23,7 +21,6 @@ def clean_data(dataframe):
             dataframe[c] = dataframe[c].astype(np.float32)
 
     return dataframe
-
 
 # Feature Engineering
 def feature_select(dataframe):
@@ -118,7 +115,6 @@ def feature_select(dataframe):
                                                        'N-Avg-structuretaxvaluedollarcnt']
     return dataframe
 
-
 def feature_engineer(dataframe):
     # clean data
     dataframe = clean_data(dataframe)
@@ -126,7 +122,6 @@ def feature_engineer(dataframe):
     dataframe = feature_select(dataframe)
 
     return dataframe
-
 
 if __name__ == "__main__":
     print "Loading data ..."
