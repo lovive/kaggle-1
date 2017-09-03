@@ -2,4 +2,5 @@
 
 *.csv
 *.zip
+*.gz
 data
