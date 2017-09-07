@@ -7,7 +7,7 @@ import datetime as dt
 
 # load data
 def load_data():
-    train = pd.read_csv('../data/train_2016.csv')
+    train = pd.read_csv('../data/train_2016_v2.csv')
     properties = pd.read_csv('../data/properties_2016.csv')
     sample = pd.read_csv('../data/sample_submission.csv')
 
@@ -38,6 +38,10 @@ def feature_select(dataframe):
     # error in calculation of the finished living area of home
     dataframe['N-LivingAreaError'] = dataframe['calculatedfinishedsquarefeet'] / dataframe[
         'finishedsquarefeet12']
+
+    # add null of calculatedfinishedsquarefeet
+    dataframe['finishedsquarefeet12'] = dataframe['finishedsquarefeet12'].fillna(dataframe['calculatedfinishedsquarefeet'])
+
     # proportion of living area
     dataframe['N-LivingAreaProp'] = dataframe['calculatedfinishedsquarefeet'] / dataframe[
         'lotsizesquarefeet']

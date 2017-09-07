@@ -12,14 +12,14 @@ xgb_params = {
     'objective': 'reg:linear',
     'eval_metric': 'mae',
     # 'base_score': 0,
-    'min_child_weight': 14,
+    'min_child_weight': 12,
     'learning_rate': 0.003,
     'max_depth': 8,
     'subsample': 0.8,
     'lambda': 0.8,
     'alpha': 0.4,
     'base_score': 0,
-    'seed': 400,
+    'seed': 500,
     'silent': 1,
 }
 
