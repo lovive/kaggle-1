@@ -3,6 +3,7 @@
 
 import numpy as np
 import pandas as pd
+import geohash
 import datetime as dt
 
 # load data
@@ -35,6 +36,16 @@ def feature_select(dataframe):
         dataframe[c] = (dataframe[c] == True)
     print "Step2:add feature"
 
+    # geohash
+    #def getGeo(lat, lon):
+    #    return geohash.encode(lat, lon)
+    #dataframe['longitude'] /= 1e6
+    #dataframe['latitude'] /= 1e6
+    #dataframe['N-geohash'] = map(getGeo, dataframe['latitude'].notnull(), dataframe['longitude'].notnull())
+
+    # life of property
+    dataframe['N-live'] = 2018 - dataframe['yearbuilt']
+
     # error in calculation of the finished living area of home
     dataframe['N-LivingAreaError'] = dataframe['calculatedfinishedsquarefeet'] / dataframe[
         'finishedsquarefeet12']
@@ -50,8 +61,8 @@ def feature_select(dataframe):
     # Amout of extra space
     dataframe['N-ExtraSpace'] = dataframe['lotsizesquarefeet'] - dataframe[
         'calculatedfinishedsquarefeet']
-    dataframe['N-ExtraSpace-2'] = dataframe['finishedsquarefeet15'] - dataframe[
-        'finishedsquarefeet12']
+    #dataframe['N-ExtraSpace-2'] = dataframe['finishedsquarefeet15'] - dataframe[
+    #   'finishedsquarefeet12']
 
     # Total number of rooms
     dataframe['N-TotalRooms'] = dataframe['bathroomcnt'] + dataframe['bedroomcnt']
@@ -68,15 +79,15 @@ def feature_select(dataframe):
     dataframe['N-GarPoolAC'] = ((dataframe['garagecarcnt'] > 0) & (dataframe['pooltypeid10'] > 0) & (
         dataframe['airconditioningtypeid'] != 5)) * 1
 
-    dataframe["N-location"] = dataframe["latitude"] + dataframe["longitude"]
+    #dataframe["N-location"] = dataframe["latitude"] + dataframe["longitude"]
     dataframe["N-location-2"] = dataframe["latitude"] * dataframe["longitude"]
-    dataframe["N-location-2round"] = dataframe["N-location-2"].round(-4)
+    #dataframe["N-location-2round"] = dataframe["N-location-2"].round(-4)
 
-    dataframe["N-latitude-round"] = dataframe["latitude"].round(-4)
-    dataframe["N-longitude-round"] = dataframe["longitude"].round(-4)
+    #dataframe["N-latitude-round"] = dataframe["latitude"].round(-4)
+    #dataframe["N-longitude-round"] = dataframe["longitude"].round(-4)
 
     # Ratio of tax of property over parcel
-    dataframe['N-ValueRatio'] = dataframe['taxvaluedollarcnt'] / dataframe['taxamount']
+    #dataframe['N-ValueRatio'] = dataframe['taxvaluedollarcnt'] / dataframe['taxamount']
 
     # TotalTaxScore
     dataframe['N-TaxScore'] = dataframe['taxvaluedollarcnt'] * dataframe['taxamount']
@@ -86,7 +97,7 @@ def feature_select(dataframe):
     dataframe["N-taxdelinquencyyear-3"] = dataframe["taxdelinquencyyear"] ** 3
 
     # Length of time since unpaid taxes
-    dataframe['N-life'] = 2018 - dataframe['taxdelinquencyyear']
+    #dataframe['N-life'] = 2018 - dataframe['taxdelinquencyyear']
 
     # Number of properties in the zip
     zip_count = dataframe['regionidzip'].value_counts().to_dict()
@@ -107,16 +118,16 @@ def feature_select(dataframe):
     dataframe['N-HeatInd'] = (dataframe['heatingorsystemtypeid'] != 13) * 1
     # polnomials of the variable
     dataframe["N-structuretaxvaluedollarcnt-2"] = dataframe["structuretaxvaluedollarcnt"] ** 2
-    dataframe["N-structuretaxvaluedollarcnt-3"] = dataframe["structuretaxvaluedollarcnt"] ** 3
+    #dataframe["N-structuretaxvaluedollarcnt-3"] = dataframe["structuretaxvaluedollarcnt"] ** 3
 
     # Average structuretaxvaluedollarcnt by city
-    group = dataframe.groupby('regionidcity')['structuretaxvaluedollarcnt'].aggregate('mean').to_dict()
-    dataframe['N-Avg-structuretaxvaluedollarcnt'] = dataframe['regionidcity'].map(group)
+    #group = dataframe.groupby('regionidcity')['structuretaxvaluedollarcnt'].aggregate('mean').to_dict()
+    #dataframe['N-Avg-structuretaxvaluedollarcnt'] = dataframe['regionidcity'].map(group)
 
     # Deviation away from average
-    dataframe['N-Dev-structuretaxvaluedollarcnt'] = abs(
-        (dataframe['structuretaxvaluedollarcnt'] - dataframe['N-Avg-structuretaxvaluedollarcnt'])) / dataframe[
-                                                       'N-Avg-structuretaxvaluedollarcnt']
+    #dataframe['N-Dev-structuretaxvaluedollarcnt'] = abs(
+    #    (dataframe['structuretaxvaluedollarcnt'] - dataframe['N-Avg-structuretaxvaluedollarcnt'])) / dataframe[
+    #                                                   'N-Avg-structuretaxvaluedollarcnt']
     return dataframe
 
 def feature_engineer(dataframe):
@@ -136,7 +147,7 @@ if __name__ == "__main__":
     sample['parcelid'] = sample['ParcelId']
     test = sample.merge(properties, on='parcelid', how='left')
     ####add month feature assuming 2016-10-01
-    test["transactiondate"] = '2016-07-01'
+    test["transactiondate"] = '2017-10-01'
 
     train = feature_engineer(train)
     test = feature_engineer(test)
